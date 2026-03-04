@@ -1,0 +1,5 @@
+# app/proguard-benchmark-rules.txt
+-dontobfuscate
+-keep class androidx.tracing.perfetto.** { *; }
+-keep class androidx.startup.** { *; }
+-keep class androidx.compose.runtime.tracing.** { *; }

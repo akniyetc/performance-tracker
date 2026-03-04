@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "performance-tracker"
 include(":app")
 include(":tracker")
+include(":benchmark")

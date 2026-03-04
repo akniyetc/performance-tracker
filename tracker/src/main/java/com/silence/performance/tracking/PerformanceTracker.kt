@@ -1,4 +1,4 @@
-package com.silence.performance.tracker
+package com.silence.performance.tracking
 
 interface PerformanceTracker {
   fun startTrace(name: String)

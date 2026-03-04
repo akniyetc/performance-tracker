@@ -2,8 +2,8 @@ package com.silence.performance.tracker.firebase
 
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
-import com.silence.performance.tracker.PerformanceTrace
-import com.silence.performance.tracker.TraceListener
+import com.silence.performance.tracking.PerformanceTrace
+import com.silence.performance.tracking.TraceListener
 
 class FirebasePerformanceTracker(
   private val firebasePerformance: FirebasePerformance,

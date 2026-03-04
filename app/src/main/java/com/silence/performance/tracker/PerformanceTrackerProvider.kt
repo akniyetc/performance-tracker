@@ -1,5 +1,8 @@
 package com.silence.performance.tracker
 
+import com.silence.performance.tracking.InMemoryPerformanceTracker
+import com.silence.performance.tracking.PerformanceTracker
+
 object PerformanceTrackerProvider {
 
   @Volatile

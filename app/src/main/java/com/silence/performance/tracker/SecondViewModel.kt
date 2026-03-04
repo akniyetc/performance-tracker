@@ -1,6 +1,5 @@
 package com.silence.performance.tracker
 
-import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.tracing.trace
@@ -8,8 +7,6 @@ import androidx.tracing.traceAsync
 import com.silence.performance.tracker.content.GifUseCase
 import com.silence.performance.tracker.content.PhotosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,17 +16,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class SecondViewModel @Inject constructor(
   private val photosUseCase: PhotosUseCase,
   private val gifsUseCase: GifUseCase,
 ) : ViewModel() {
   private val performanceTracker = PerformanceTrackerProvider.getInstance()
-  private val _state: MutableStateFlow<ViewState> = MutableStateFlow(ViewState.Loading)
-  val state: StateFlow<ViewState> = _state.asStateFlow()
+  private val _state: MutableStateFlow<SecondViewState> = MutableStateFlow(SecondViewState.Loading)
+  val state: StateFlow<SecondViewState> = _state.asStateFlow()
 
   init {
     trace(
-      lazyLabel = { "MainViewModel init" },
+      lazyLabel = { "SecondViewModel init" },
       block = {
         val traceListener = DemoListener {}
         performanceTracker.addListener(traceListener)
@@ -52,14 +49,14 @@ class MainViewModel @Inject constructor(
       methodName = "loadPhotos",
       cookie = 0,
       block = {
-        viewModelScope.async(Dispatchers.IO) { photosUseCase.photos().map { ContentType.Photo(it) } }
+        viewModelScope.async(Dispatchers.IO) { photosUseCase.photos().map { SecondContentType.Photo(it) } }
       }
     )
     val gifs = traceAsync(
       methodName = "loadGifs",
       cookie = 0,
       block = {
-        viewModelScope.async(Dispatchers.IO) { gifsUseCase.gifs().map { ContentType.Gif(it) } }
+        viewModelScope.async(Dispatchers.IO) { gifsUseCase.gifs().map { SecondContentType.Gif(it) } }
       }
     )
 
@@ -70,17 +67,15 @@ class MainViewModel @Inject constructor(
         (photos.await() + gifs.await()).shuffled()
       }
     )
-    _state.value = ViewState.Content(content.toImmutableList())
+    _state.value = SecondViewState.Content(content)
   }
 }
 
-@Stable
-sealed class ViewState {
-  object Loading : ViewState()
-  data class Content(val content: ImmutableList<ContentType>) : ViewState()
+sealed class SecondViewState {
+  object Loading : SecondViewState()
+  data class Content(val content: List<SecondContentType>) : SecondViewState()
 }
-@Stable
-sealed class ContentType {
-  data class Photo(val url: String) : ContentType()
-  data class Gif(val url: String) : ContentType()
+sealed class SecondContentType {
+  data class Photo(val url: String) : SecondContentType()
+  data class Gif(val url: String) : SecondContentType()
 }

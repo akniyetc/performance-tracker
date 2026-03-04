@@ -1,5 +1,8 @@
 package com.silence.performance.tracker
 
+import com.silence.performance.tracking.PerformanceTrace
+import com.silence.performance.tracking.TraceListener
+
 class DemoListener(
   val onTraceStopped: (PerformanceTrace) -> Unit,
 ) : TraceListener {

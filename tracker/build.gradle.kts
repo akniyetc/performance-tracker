@@ -1,11 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
 }
 
 android {
-  namespace = "com.silence.performance.tracker"
-  compileSdk = 35
+  namespace = "com.silence.performance.tracking"
+  compileSdk = 36
 
   defaultConfig {
     minSdk = 24
@@ -14,18 +16,21 @@ android {
     consumerProguardFiles("consumer-rules.pro")
   }
 
-  buildTypes {
-    release {
-      isMinifyEnabled = false
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    }
-  }
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
   }
-  kotlinOptions {
-    jvmTarget = "11"
+}
+
+kotlin {
+  compilerOptions {
+    jvmTarget.set(JvmTarget.fromTarget("17"))
+    freeCompilerArgs.addAll(
+      listOf(
+        "-opt-in=androidx.benchmark.ExperimentalBenchmarkConfigApi",
+        "-opt-in=androidx.benchmark.perfetto.ExperimentalPerfettoCaptureApi",
+      )
+    )
   }
 }
 

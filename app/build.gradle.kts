@@ -1,17 +1,22 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
+  alias(libs.plugins.hilt)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.kotlin.serialization)
 }
 
 android {
   namespace = "com.silence.performance.tracker"
-  compileSdk = 35
+  compileSdk = 36
 
   defaultConfig {
-    applicationId = "com.silence.performance.tracker"
+    applicationId = "com.silence.performance"
     minSdk = 24
-    targetSdk = 35
+    targetSdk = 36
     versionCode = 1
     versionName = "1.0"
 
@@ -19,20 +24,44 @@ android {
   }
 
   buildTypes {
-    release {
+    debug {
+      isDebuggable = true
       isMinifyEnabled = false
+      isShrinkResources = false
+    }
+    release {
+      isMinifyEnabled = true
+      isDebuggable = false
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+    create("benchmark") {
+      initWith(buildTypes.getByName("release"))
+      isMinifyEnabled = false
+      isShrinkResources = false
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-benchmark-rules.txt")
+      signingConfig = signingConfigs.getByName("debug")
+      matchingFallbacks += listOf("debug")
     }
   }
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-  }
-  kotlinOptions {
-    jvmTarget = "11"
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
   }
   buildFeatures {
     compose = true
+  }
+}
+
+kotlin {
+  compilerOptions {
+    jvmTarget.set(JvmTarget.fromTarget("17"))
+    freeCompilerArgs.addAll(
+      listOf(
+        "-opt-in=androidx.benchmark.ExperimentalBenchmarkConfigApi",
+        "-opt-in=androidx.benchmark.perfetto.ExperimentalPerfettoCaptureApi",
+      )
+    )
   }
 }
 
@@ -41,6 +70,12 @@ dependencies {
   implementation(libs.firebase.perf)
   implementation(libs.sentry.android) { exclude(module = "sentry-android-sdk") }
   implementation(libs.androidx.startup)
+  implementation(libs.retrofit)
+  implementation(libs.retrofit.serialization)
+  implementation(libs.kotlinx.serialization)
+
+  implementation(libs.hilt)
+  ksp(libs.hiltCompiler)
 
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -50,6 +85,15 @@ dependencies {
   implementation(libs.androidx.ui.graphics)
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
+  implementation(libs.androidxComposeRuntimeTracing)
+  implementation(libs.androidxTracingKtx)
+  implementation(libs.lottie)
+  implementation(libs.coil.core)
+  implementation(libs.coil)
+  implementation(libs.coil.gif)
+  implementation(libs.coil.network)
+  implementation(libs.androidxProfileInstaller)
+  implementation(libs.kotlinx.collections.immutable)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)

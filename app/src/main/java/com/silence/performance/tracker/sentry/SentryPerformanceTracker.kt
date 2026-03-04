@@ -1,7 +1,7 @@
 package com.silence.performance.tracker.sentry
 
-import com.silence.performance.tracker.PerformanceTrace
-import com.silence.performance.tracker.TraceListener
+import com.silence.performance.tracking.PerformanceTrace
+import com.silence.performance.tracking.TraceListener
 import io.sentry.ITransaction
 import io.sentry.Sentry
 import io.sentry.SpanStatus
